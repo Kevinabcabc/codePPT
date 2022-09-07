@@ -1,0 +1,74 @@
+.progress-box {
+  width: 100%;
+  height: 80px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  color: whitesmoke;
+}
+
+.scroll-box {
+  box-sizing: border-box;
+  height: 100%;
+  width: 2000px;
+  height: 80px;
+  padding: 4px;
+}
+
+.progress-card-wrapper {
+  display: inline-block;
+  width: 180px;
+  height: 76px;
+  margin-right: 4px;
+  overflow: hidden;
+}
+
+.progress-card-active {
+  background-color: white;
+  color: #333;
+}
+
+.progress-card {
+  width: 100%;
+  height: 66px;
+  box-sizing: border-box;
+  padding: 4px;
+  border: 1px solid white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  user-select: none;
+}
+
+.progress-title {
+  width: 170px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.progress-title-num {
+  font-size: 16px;
+  font-family: fantasy;
+  display: inline-block;
+  transform: translateY(2px);
+  margin-right: 8px;
+}
+
+.progress-title-text {
+  flex: 1;
+  font-size: 14px;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* white-space: nowrap; */
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.progress-checkbox {
+  margin-right: -4px;
+}
+
+

@@ -1,43 +1,19 @@
-const { reactive, effect } = VueReactivity;
+// tools
+import queueJob from '../tools/queueJob.js';
+import resolveProps from '../tools/resolveProps.js';
+import hasPropsChanged from '../tools/hasPropsChanged.js'
+import lis from '../tools/lis.js';
+// symbol
+import { Text, Comment, Fragment } from '../symbols/symbols.js';
+const { reactive, effect, shallowReactive, shallowReadonly } = VueReactivity;
 
-const Text = Symbol();
-const Comment = Symbol();
-const Fragment = Symbol();
+// global variable
+let currentInstance = null;
+function setCurrentInstance(instance) {
+  currentInstance = instance;
+}
 
-/** Returns an array of longest increasing subsequences
- * @param {number[]} nums
- * @return {number}
- */
-const lis = function(nums) {
-  const list = new Array(nums.length).fill(1);
-  const lisList = [];
-  let max = 1;
-
-  for (let i = 0; i < nums.length; i++) {
-      let currentOpsMax = list[i];
-      for (j = i; j >= 0; j--) {
-          const sum = list[i] + list[j];
-          if (nums[i] > nums[j] && sum > currentOpsMax) {
-              currentOpsMax = sum;
-          }
-      }
-      list[i] = currentOpsMax;
-      if (currentOpsMax > max) {
-          max = currentOpsMax;
-      }
-  }
-
-  for (let i = list.length - 1; i >= 0; i--) {
-      if (list[i] === max) {
-        lisList.unshift(i);
-          max--;
-      }
-  }
-  return lisList;
-};
-
-function createRenderer(options) {
-
+export default function createRenderer(options) {
   const {
     createElement,
     insert,
@@ -57,27 +33,156 @@ function createRenderer(options) {
       }
     }
     // save old vnode
-    console.log(213, container)
     container._vnode = vnode;
   }
+
+  /**
+   * onMounted
+   * @param {*} fn 
+   */
+  function onMounted(fn) {
+    if (currentInstance) {
+      currentInstance.mounted.push(fn);
+    } else {
+      console.error('onMounted can only run in setup function')
+    }
+  }
+
+  window.onMounted = onMounted;
 
   function mountComponent(vnode, container, anchor) {
     // get type
     const componentOptions = vnode.type;
-    // get render function
-    const { render, data } = componentOptions;
-    // get data
-    const state = reactive(data());
-    effect(() => {
-      // get vnode
-      const subTree = render.call(state, state);
-      patch(null, subTree, container, anchor)
+    // options
+    let {
+      render, data, setup = () => {}, props: propsOption, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated
+    } = componentOptions;
+
+    // get slot
+    const slot = vnode.children;
+
+    // beforeCreate
+    beforeCreate && beforeCreate();
+
+    // reactive data
+    const state = data ? reactive(data()) : null;
+
+    // get props and attrs
+    const [props, attrs] = resolveProps(propsOption, vnode.props);
+
+    // custom component instance
+    const instance = {
+      state,
+      props: shallowReactive(props),
+      isMounted: false,
+      subTree: null,
+      slot,
+      // save mounted function
+      mounted: [],
+    };
+    // set current instance
+    setCurrentInstance(instance);
+    // emit handler
+    function emit(event, ...payload) {
+      const eventName = `on${event[0].toUpperCase() + event.slice(1)}`;
+      const handler = instance.props[eventName];
+      if (handler) {
+        handler(...payload);
+      } else {
+        console.error('handler not exist')
+      }
+    }
+
+    const setupContext = { attrs, emit };
+    // run setup function
+    const setupResult = setup(shallowReadonly(instance.props), setupContext);
+    // after setup clear current instance
+    setCurrentInstance(null);
+
+    let setupState = null;
+    if (typeof setupResult === 'function') {
+      if (render) console.error('setup return render function, render option will be ignored')
+      render = setupResult;
+    } else {
+      setupState = setupContext;
+    }
+
+    // Mount the component instance to the vnode for subsequent updates
+    vnode.component = instance;
+
+    const renderContext = new Proxy(instance, {
+      get(t, k, r) {
+        const { state, props, slot } = t;
+        if (k === '$slot') return slot;
+        if (state && k in state) {
+          return state[k];
+        } else if (k in props) {
+          return props[k]
+        } else {
+          console.error(`get ${k} error, not exist`)
+        }
+      },
+      set(t, k, v, r) {
+        const { state, props } = t;
+        if (state && k in state) {
+          state[k] = v
+        } else if (k in props) {
+          props[k] = v;
+        } else {
+          console.error(`set ${k} error not exist`)
+        }
+        return true;
+      }
     });
 
+    // instance created
+    created && created.call(renderContext);
+
+    effect(() => {
+      const subTree = render.call(renderContext, renderContext);
+      if (!instance.isMounted) {
+        // beforeMount
+        beforeMount && beforeMount.call(renderContext);
+
+        patch(null, subTree, container, anchor);
+        instance.isMounted = true;
+
+        // mounted
+        mounted && mounted.call(renderContext);
+        instance.mounted && instance.mounted.forEach(hook => hook.call(renderContext));
+      } else {
+        // beforeUpdate
+        beforeUpdate && beforeUpdate.call(renderContext);
+
+        patch(instance.subTree, subTree, container, anchor);
+
+        // updated
+        updated && updated.call(renderContext);
+      }
+      instance.subTree = subTree;
+    },{
+      scheduler: queueJob,
+    }
+    );
   }
 
-  function patchComponent() {
-
+  function patchComponent(n1, n2, anchor) {
+    // get component instance
+    const instance = n2.component = n1.component;
+    // get current props data
+    const { props } = instance;
+    // check if props changed if changed update
+    if (hasPropsChanged(n1.props, n2.props)) {
+      const [nextProps] = resolveProps(n2.type.props, n2.props);
+      // update props
+      for (const k in nextProps) {
+        props[k] = nextProps[k];
+      }
+      // delete un exist props
+      for (const k in props) {
+        if (!(k in nextProps)) delete props[k];
+      }
+    }
   }
 
   function patch(n1, n2, container, anchor) {
@@ -140,7 +245,7 @@ function createRenderer(options) {
     // first update properties
     for (const key in newProps) {
       if (newProps[key] !== oldProps[key]) {
-        patchProps(el, key, oldProps[key], newProps[key])
+        patchProps(el, key, oldProps[key], newProps[key]);
       }
     }
     for (const key in oldProps) {
@@ -186,7 +291,7 @@ function createRenderer(options) {
     let oldVNode = oldChildren[j];
     let newVNode = newChildren[j];
     // handle same start node
-    while (oldVNode.key === newVNode.key) {
+    while (oldVNode && newVNode && oldVNode.key === newVNode.key) {
       patch(oldVNode, newVNode, container);
       j++;
       oldVNode = oldChildren[j];
@@ -195,14 +300,17 @@ function createRenderer(options) {
     // handle same end node
     let oldEnd = oldChildren.length -1;
     let newEnd = newChildren.length - 1;
-
     oldVNode = oldChildren[oldEnd];
     newVNode = newChildren[newEnd];
-    while (oldVNode.key === newVNode.key) {
+    while (oldVNode && newVNode && oldVNode.key === newVNode.key) {
       patch(oldVNode, newVNode, container);
       oldVNode = oldChildren[--oldEnd];
       newVNode = newChildren[--newEnd];
     }
+    if (newEnd < 0 || oldVNode < 0) {
+      return;
+    }
+    
     // handle new node
     if (j > oldEnd && j <= newEnd) {
       const anchorIndex = newEnd + 1;
@@ -224,7 +332,7 @@ function createRenderer(options) {
 
       const oldStart = j;
       const newStart = j;
-      let moved = false;
+      let move = false;
       let pos = 0;
       
       // construct new node key-newIndex map
@@ -326,71 +434,3 @@ function createRenderer(options) {
     hydrate,
   }
 }
-
-function shouldSetAsProps(el, key, value) {
-  // special form HTML Attribute readonly
-  if (key === 'form' && el.tagName === 'INPUT') return false;
-  // if key in el means DOM attribute 
-  return key in el
-}
-
-const renderer = createRenderer({
-  createElement(tag) {
-    return document.createElement(tag);
-  },
-  setElementText(el, text) {
-    el.textContent = text;
-  },
-  insert(el, parent, anchor = null) {
-    parent.insertBefore(el, anchor);
-  },
-  createText(text) {
-    return document.createTextNode(text);
-  },
-  createComment(text) {
-    return document.createComment(text);
-  },
-  patchProps(el, key, preValue, nextValue) {
-    if (/^on/.test(key)) {
-      const invokers = el._vei || (el._vei = {});
-      const name = key.slice(2).toLowerCase();
-      let invoker = invokers[name];
-      if (nextValue) {
-        if (!invoker) {
-          invoker = el._vei[name] = (e) => {
-            if (e.timeStamp < invoker.attached) return
-            // event maybe multiple
-            if (Array.isArray(invoker.value)) {
-              invoker.value.forEach((fn) => fn(e))
-            } else {
-              invoker.value(e);
-            }
-          }
-          invoker.value = nextValue;
-          // add invoker bind event time
-          invoker.attached = performance.now();
-          el.addEventListener(name, invoker);
-        } else {
-          invoker.value = nextValue;
-        }
-      } else if (invoker) {
-        el.removeEventListener(name, invoker);
-      }
-    } else if (key === 'class') {
-      el.className = nextValue || '';
-    } else if (shouldSetAsProps(el, key, nextValue)) {
-      const type = typeof el[key];
-      // if property is boolean and value is '', so it's true
-      if (type === 'boolean' && nextValue === '') {
-        el[key] = true;
-      } else {
-        el[key] = nextValue;
-      }
-    } else {
-      // set HTML Attribute
-      el.setAttribute(key, nextValue);
-    }
-  }
-});
-
-export default renderer;

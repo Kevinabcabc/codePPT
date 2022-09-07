@@ -1,0 +1,4 @@
+
+const versions = [{"data":["\\version_00\\index.js","\\version_00\\index.html","\\version_00\\info.json","\\version_00\\config\\browserRendererConfig.js","\\version_00\\renderer\\createRenderer.js","\\version_00\\renderer\\index.js","\\version_00\\renderer\\defineAsyncComponent.js","\\version_00\\modules\\reactivity.global.js","\\version_00\\tools\\hasPropsChanged.js","\\version_00\\tools\\lis.js","\\version_00\\tools\\queueJob.js","\\version_00\\tools\\resolveProps.js","\\version_00\\tools\\shouldSetAsProps.js","\\version_00\\symbols\\symbols.js"],"path":"version_00","info":{"title":"异步组件","info":"初步封装defineAsyncComponent函数"}},{"data":["\\version_01\\demo.txt","\\version_01\\index.js","\\version_01\\info.json"],"path":"version_01","info":{"title":"demo","info":"demo"}}];
+export default versions; 
+  

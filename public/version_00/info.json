@@ -1,0 +1,4 @@
+{
+  "title": "异步组件",
+  "info": "初步封装defineAsyncComponent函数"
+}
