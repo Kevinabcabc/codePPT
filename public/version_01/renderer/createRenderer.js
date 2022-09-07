@@ -403,7 +403,7 @@ export default function createRenderer(options) {
     }
     // old vnode exist means unmount operation
     // unmount exact element
-    const parent = vnode.el.parentNode;
+    const parent = vnode.el?.parentNode;
     if (parent) parent.removeChild(vnode.el);
   }
 

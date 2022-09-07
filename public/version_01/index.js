@@ -22,8 +22,8 @@ const SyncComponent = {
   }
 }
 
-// 异步组件
-const AsyncComponent = defineAsyncComponent(() => new Promise((resolve, reject) => {
+// 异步组件loader
+const loader = () => new Promise((resolve, reject) => {
   setTimeout(() => {
     resolve({
       name: 'AsyncComponent',
@@ -44,8 +44,25 @@ const AsyncComponent = defineAsyncComponent(() => new Promise((resolve, reject) 
         }
       }
     });
-  }, 1000);
-}));
+  }, 2000);
+});
+
+const CustomErrorComponent = {
+  name: 'CustomErrorComponent',
+  render() {
+    return {
+      type: 'div',
+      children: `custom error component: timeout`,
+    }
+  }
+};
+
+// 异步组件
+const AsyncComponent = defineAsyncComponent({
+  loader,
+  timeout: 1000,
+  errorComponent: CustomErrorComponent,
+});
 
 // 根组件
 const App = {
