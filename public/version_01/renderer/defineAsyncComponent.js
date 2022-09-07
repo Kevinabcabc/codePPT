@@ -44,7 +44,7 @@ const defineAsyncComponent = (options) => {
       }
 
       // 卸载完成后清除定制器
-      // onMounted(() => clearTimeout(timer));
+      // onUmounted(() => clearTimeout(timer));
 
       // 占位内容
       const placeholder = { type: Text, children: 'loading...' };
