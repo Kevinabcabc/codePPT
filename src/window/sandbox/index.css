@@ -5,7 +5,7 @@
 }
 
 .explore {
-  flex: 1;
+  width: 200px;
 }
 
 .editor, .preview {

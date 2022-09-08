@@ -9,7 +9,6 @@ function Card({
   selectIdx,
 }) {
   // const [checked, setChecked] = useState(false);
-  console.log(1, selectIdx, idx)
   return (
     <div className='progress-card-wrapper' onClick={() => setIdx(idx)}>
       <div className={`progress-card ${selectIdx === idx ? 'progress-card-active' : ''}`}>

@@ -10,7 +10,7 @@ function Progress({
   return (
     <div className='progress-box'>
       <div className='scroll-box'>
-        {versions.map((version, idx) => <Card selectIdx={selectIdx} setIdx={setIdx} versionInfo={version} idx={idx} />)}
+        {versions.map((version, idx) => <Card key={idx} selectIdx={selectIdx} setIdx={setIdx} versionInfo={version} idx={idx} />)}
       </div>
     </div>
   )

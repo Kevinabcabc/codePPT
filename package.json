@@ -142,5 +142,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }

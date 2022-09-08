@@ -25,7 +25,7 @@ const SyncComponent = {
 // 异步组件loader
 const loader = () => new Promise((resolve, reject) => {
   setTimeout(() => {
-    reject(new Error('error component'));
+    // reject(new Error('error component'));
     resolve({
       name: 'AsyncComponent',
       data() {
@@ -63,6 +63,12 @@ const AsyncComponent = defineAsyncComponent({
   loader,
   timeout: 3000,
   errorComponent: CustomErrorComponent,
+  delay: 200,
+  loadingComponent: {
+    render() {
+      return { type: 'h2', children: 'Loading...' };
+    }
+  },
 });
 
 // 根组件
