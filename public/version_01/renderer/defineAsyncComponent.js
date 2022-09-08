@@ -47,18 +47,18 @@ const defineAsyncComponent = (options) => {
       // onUmounted(() => clearTimeout(timer));
 
       // 占位内容
-      const placeholder = { type: Text, children: 'loading...' };
+      const placeholder = { type: Text, children: '' };
 
       return () => {
         if (loaded.value && !timeout.value) {
           // 异步组件加载成功
           return { type: InnerComp };
-        } else if (timeout.value) {
+        } else if (!loaded.value && timeout.value) {
           // 如果加载超时，并且用户指定了Error组件，则渲染该组件
           return options.errorComponent ? { type: options.errorComponent } : placeholder;
         }
         // 渲染一个占位容器
-        return loaded.value ? { type: InnerComp } : placeholder;
+        return placeholder;
       }
     },
   }
