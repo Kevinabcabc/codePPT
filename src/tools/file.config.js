@@ -17,7 +17,7 @@ const versions = [
       "\\version_00\\tools\\shouldSetAsProps.js",
     ],
     path: "version_00",
-    info: { title: "异步组件", info: "封装defineAsyncComponent函数" },
+    info: { title: "异步组件", info: "初步封装defineAsyncComponent函数" },
   },
   {
     data: [
@@ -25,10 +25,10 @@ const versions = [
       "\\version_01\\info.json",
       "\\version_01\\index.js",
       "\\version_01\\config\\browserRendererConfig.js",
-      "\\version_01\\modules\\reactivity.global.js",
       "\\version_01\\renderer\\createRenderer.js",
-      "\\version_01\\renderer\\defineAsyncComponent.js",
       "\\version_01\\renderer\\index.js",
+      "\\version_01\\renderer\\defineAsyncComponent.js",
+      "\\version_01\\modules\\reactivity.global.js",
       "\\version_01\\symbols\\symbols.js",
       "\\version_01\\tools\\hasPropsChanged.js",
       "\\version_01\\tools\\lis.js",
@@ -37,7 +37,30 @@ const versions = [
       "\\version_01\\tools\\shouldSetAsProps.js",
     ],
     path: "version_01",
-    info: { title: "异步组件", info: "超时与Error组件" },
+    info: {
+      title: "异步组件",
+      info: "支持指定超时时长，超时支持配置Error组件",
+    },
+  },
+  {
+    data: [
+      "\\version_02\\index.html",
+      "\\version_02\\index.js",
+      "\\version_02\\info.json",
+      "\\version_02\\config\\browserRendererConfig.js",
+      "\\version_02\\renderer\\createRenderer.js",
+      "\\version_02\\renderer\\defineAsyncComponent.js",
+      "\\version_02\\renderer\\index.js",
+      "\\version_02\\modules\\reactivity.global.js",
+      "\\version_02\\symbols\\symbols.js",
+      "\\version_02\\tools\\lis.js",
+      "\\version_02\\tools\\hasPropsChanged.js",
+      "\\version_02\\tools\\queueJob.js",
+      "\\version_02\\tools\\resolveProps.js",
+      "\\version_02\\tools\\shouldSetAsProps.js",
+    ],
+    path: "version_02",
+    info: { title: "异步组件", info: "处理异步组件加载中发生的错误" },
   },
 ];
 export default versions;
