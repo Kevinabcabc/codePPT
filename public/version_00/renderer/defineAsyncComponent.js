@@ -20,7 +20,7 @@ const defineAsyncComponent = (loader) => {
 
       return () => {
         // 如果异步加载成功，则渲染该组件，否则渲染一个占位容器
-        return loaded.value ? { type: InnerComp } : { type: Text, children: 'loading' };
+        return loaded.value ? { type: InnerComp } : { type: Text, children: '' };
       }
     },
   }
