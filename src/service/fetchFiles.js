@@ -11,10 +11,12 @@ function fetchFiles(fileData) {
       const fileMap = {};
       
       for (let i = 0; i < files.length; i++) {
+        const key = files[i].replaceAll('\\', '/').replace(`/${path}`, '');
         fileMap[files[i].replaceAll('\\', '/').replace(`/${path}`, '')] = {
           readOnly: false,
           code: res[i],
           hidden: false,
+          active: key ===  '/index.js',
         };
       }
       resolve(fileMap);

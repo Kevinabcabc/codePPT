@@ -6,7 +6,7 @@ import {
   SandpackFileExplorer,
   SandpackCodeEditor,
   SandpackPreview,
-  // SandpackConsole,
+  SandpackConsole,
 } from "@codesandbox/sandpack-react";
 import { sandpackDark, dracula, nightOwl, monokaiPro, githubLight, aquaBlue } from "@codesandbox/sandpack-themes";
 
@@ -44,13 +44,15 @@ function Sandbox({
         <SandpackLayout>
           <div className='sandbox'>
             <div className='explore'><SandpackFileExplorer /></div>
-            <div className='editor'><SandpackCodeEditor readOnly={false} {...options} /></div>
+            <div className='editor'><SandpackCodeEditor {...options} /></div>
             <div className='preview'>
-              <SandpackPreview
-                showNavigator={options?.showNavigator}
-                showRefreshButton={options?.showRefreshButton}
-              />
-              {/* <SandpackConsole /> */}
+              <div className='preview-box'>
+                <SandpackPreview
+                  showNavigator={options?.showNavigator}
+                  showRefreshButton={options?.showRefreshButton}
+                />
+              </div>
+              <div className='console-box'><SandpackConsole /></div>
             </div>
           </div>
         </SandpackLayout>

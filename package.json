@@ -4,8 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
-    "@codesandbox/sandpack-client": "^1.5.4",
-    "@codesandbox/sandpack-react": "^1.5.5",
+    "@codesandbox/sandpack-react": "^1.7.2",
     "@codesandbox/sandpack-themes": "^1.6.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@rebass/forms": "^4.0.6",
