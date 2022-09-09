@@ -1,4 +1,4 @@
 {
   "title": "异步组件",
-  "info": "支持配置Loading组件以及Loading延迟--解决umount问题"
+  "info": "重试机制实现原理"
 }

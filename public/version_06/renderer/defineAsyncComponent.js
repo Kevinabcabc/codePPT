@@ -17,6 +17,31 @@ const defineAsyncComponent = (options) => {
   const { loader } = options;
 
   // 一个变量用来储存异步加载组件
+
+  // 记录重载次数
+  let retries = 0;
+
+  function load() {
+    return loader()
+      // 捕捉错误
+      .catch((error) => {
+        if (options.onError) {
+          // 返回一个新的promise实例
+          return new Promise((resolve, reject) => {
+            // 重试
+            const retry = () => {
+              retries++;
+              resolve(load());
+            };
+            const fail = (msg) => reject(msg);
+            options.onError(retry, fail, retries);
+          });
+        } else {
+          throw error
+        }
+      });
+  }
+
   let InnerComp = null;
   // 返回一个包装组件
   return {
@@ -41,7 +66,7 @@ const defineAsyncComponent = (options) => {
 
       // 执行加载器函数（返回一个Promise实例）
       // 加载成功后，将加载成功的组件赋值给InnerComp, 并将loaded标记为true
-      loader().then(c => {
+      load().then(c => {
         InnerComp = c;
         loaded.value = true;
       })

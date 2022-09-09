@@ -1,98 +1,45 @@
-import defineAsyncComponent from './renderer/defineAsyncComponent.js';
-import renderer from './renderer/index.js';
+let retries = 0;
+const maxRetries = 2;
 
-// 同步组件
-const SyncComponent = {
-  name: 'syncComponent',
-  data() {
-    return {
-      name: 'Tom',
-    }
-  },
-  render() {
-    return {
-      type: 'div',
-      props: {
-        onClick: () => {
-          this.name = 'Terry';
-        }
-      },
-      children: `Sync Component:  My name is ${this.name}`,
-    }
-  }
+function fetch() {
+  return new Promise((resolve, reject) => {
+    console.log('enter fetch promise');
+    setTimeout(() => {
+        console.log(' fetch promise reject err');
+        reject('err');
+    }, 1000);
+  });
 }
 
-// 异步组件loader
-const loader = () => new Promise((resolve, reject) => {
-  setTimeout(() => {
-    // reject(new Error('error component'));
-    resolve({
-      name: 'AsyncComponent',
-      data() {
-        return {
-          name: 'Kangkang',
-        }
-      },
-      render() {
-        return {
-          type: 'div',
-          props: {
-            onClick: () => {
-              this.name = 'Maria';
-            }
-          },
-          children: `Async Component:  My name is ${this.name}`,
-        }
-      }
+function load(onError) {
+  const p = fetch();
+  return p.catch(() => {
+    console.log('load catch err');
+    return new Promise((resolve, reject) => {
+      const retry = () => {
+        retries++;
+        resolve(load(onError));
+      };
+      const fail = (msg) => reject(msg);
+      onError(retry, fail);
     });
-  }, 2000);
-});
-
-const CustomErrorComponent = {
-  name: 'CustomErrorComponent',
-  render() {
-    return {
-      type: 'div',
-      children: `custom error component: timeout`,
-    }
-  }
-};
-
-// 异步组件
-const AsyncComponent = defineAsyncComponent({
-  loader,
-  timeout: 3000,
-  errorComponent: CustomErrorComponent,
-  delay: 200,
-  loadingComponent: {
-    render() {
-      return { type: 'h2', children: 'Loading...' };
-    }
-  },
-});
-
-// 根组件
-const App = {
-  name: 'app',
-  render() {
-    return {
-      type: 'div',
-      children: [
-        {
-          type: SyncComponent,
-        },
-        {
-          type: AsyncComponent,
-        },
-      ],
-    }
-  }
+  });
 }
 
-// 虚拟DOM
-const componentVNode = {
-  type: App,
-}
-
-// 渲染虚拟DOM
-renderer.render(componentVNode, document.querySelector('#root'));
+load((retry, fail) => {
+  console.log('retries ++', retries)
+  if (retries >= maxRetries) {
+    fail(`load fail after ${retries} times`);
+    return;
+  }
+  retry();
+})
+.then((data) => {
+  console.log('resolve data: ', data);
+})
+.catch(msg => {
+  console.log(`catch err msg: ${msg}`);
+})
+.finally(() => {
+  console.log('finally finished')
+});

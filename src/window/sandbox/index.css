@@ -26,9 +26,9 @@
 }
 
 .preview-box {
-  height: calc(100% - 300px);
+  height: 50%;
 }
 
 .console-box {
-  height: 300px;
+  height: 50%;
 }

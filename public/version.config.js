@@ -97,7 +97,7 @@ function readVersionPath(versionPath, idx) {
 }
 
 setTimeout(() => {
-  fs.writeFile('version.js', `
+  fs.writeFile('../src/config/file.config.js', `
 const versions = ${JSON.stringify(versions)};
 export default versions; 
   `,'utf8',function(error){
