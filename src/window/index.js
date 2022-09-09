@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import './index.css';
 import Sandbox from './sandbox';
 import Progress from './progress';
-import versions from '../tools/file.config';
+import versions from '../config/file.config';
 import fetchFiles from '../service/fetchFiles';
 
 function App() {

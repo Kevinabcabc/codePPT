@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Checkbox, Label } from '@rebass/forms';
+import React from 'react';
+// import { Checkbox, Label } from '@rebass/forms';
 import './index.css';
 
 function Card({

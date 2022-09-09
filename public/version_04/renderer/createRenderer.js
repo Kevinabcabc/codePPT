@@ -231,7 +231,7 @@ export default function createRenderer(options) {
       if (!n1) {
         mountComponent(n2, container, anchor);
         // 不同类型自定义组件卸载
-      } else if (n1.type.name !== n2.type.name) {
+      } else if (n1.type !== n2.type) {
         unmount(n1);
         mountComponent(n2, container, anchor);
       } else {

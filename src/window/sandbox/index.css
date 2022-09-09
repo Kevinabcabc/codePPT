@@ -17,7 +17,11 @@
   overflow-y: scroll;
 }
 
-.preview .sp-preview{
+.editor .cm-gutterElement {
+  font-size: 14px;
+}
+
+.preview .sp-preview, .editor .sp-editor{
   height: calc(100% - 4px);
 }
 

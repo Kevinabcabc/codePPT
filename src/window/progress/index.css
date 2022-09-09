@@ -9,7 +9,6 @@
 .scroll-box {
   box-sizing: border-box;
   height: 100%;
-  width: 2000px;
   height: 80px;
   padding: 4px;
 }
