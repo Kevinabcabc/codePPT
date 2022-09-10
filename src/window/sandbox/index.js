@@ -17,10 +17,8 @@ const externalResources = [
 const editorHeight = window.innerHeight - 80;
 const options = {
   showTabs: false,
-  showNavigator: true,
   showLineNumbers: true,
   showInlineErrors: true,
-  showRefreshButton: true,
   closableTabs: true,
   wrapContent: true,
 };
@@ -38,6 +36,8 @@ function Sandbox({
         theme={nightOwl}
         options={{
           externalResources,
+          activeFile: '/index.js',
+          initMode: 'lazy',
         }}
         editorHeight={editorHeight}
       >
@@ -48,8 +48,9 @@ function Sandbox({
             <div className='preview'>
               <div className='preview-box'>
                 <SandpackPreview
-                  showNavigator={options?.showNavigator}
-                  showRefreshButton={options?.showRefreshButton}
+                  showNavigator={true}
+                  showRefreshButton={true}
+                  key={Math.random()}
                 />
               </div>
               <div className='console-box'><SandpackConsole /></div>

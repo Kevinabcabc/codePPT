@@ -16,7 +16,7 @@ function fetchFiles(fileData) {
           readOnly: false,
           code: res[i],
           hidden: false,
-          active: key ===  '/index.js',
+          // active: key ===  '/index.js',
         };
       }
       resolve(fileMap);
