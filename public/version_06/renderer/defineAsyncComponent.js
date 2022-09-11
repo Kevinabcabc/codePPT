@@ -71,7 +71,10 @@ const defineAsyncComponent = (options) => {
         loaded.value = true;
       })
       // 捕获加载过程中的错误
-      .catch((err) => error.value = err)
+      .catch((err) => {
+        error.value = err;
+        console.error(err);
+      })
       .finally(() => {
         loading.value = false;
         // 加载完成后，清除定时器
@@ -100,13 +103,13 @@ const defineAsyncComponent = (options) => {
 
         if (loaded.value && !error.value) {
           // 异步组件加载成功
-          return { type: InnerComp, key: 'async1' };
+          return { type: InnerComp };
         } else if (error.value && options.errorComponent && !loaded.value) {
           // 如果加载超时，并且用户指定了Error组件，则渲染该组件
-          return { type: options.errorComponent, props: { error: error.value}, key: 'async1' };
+          return { type: options.errorComponent, props: { error: error.value} };
         } else if (loading.value && options.loadingComponent) {
           // 异步组件正在加载并且用户指定了Loading组件，则渲染Loading组件
-          return { type: options.loadingComponent, key: 'async1' };
+          return { type: options.loadingComponent };
         }
         // 渲染一个占位容器
         return placeholder;

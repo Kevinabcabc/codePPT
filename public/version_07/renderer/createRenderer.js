@@ -198,7 +198,7 @@ export default function createRenderer(options) {
 
   function patch(n1, n2, container, anchor) {
     // if n1 exist, compare type
-    if (n1 && n1.type !== n2.type && n1.key !== n2.key) {
+    if (n1 && n1.type !== n2.type) {
       // if different type, unmount n1
       unmount(n1);
       n1 = null;
