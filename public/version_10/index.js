@@ -5,7 +5,13 @@ const Tab1 = {
   render() {
     return {
       type: 'div',
-      children: 'keptAlive component1',
+      props: {
+        onClick: () => {
+          window.refreshKeepAlive();
+          console.log('隐藏容器：', window.storageContainer);
+        },
+      },
+      children: 'keptAlive component1 (click switch component2)',
     };
   }
 }
@@ -14,7 +20,13 @@ const Tab2 = {
   render() {
     return {
       type: 'div',
-      children: 'keptAlive component2',
+      props: {
+        onClick: () => {
+          window.refreshKeepAlive();
+          console.log('隐藏容器：', window.storageContainer);
+        },
+      },
+      children: 'keptAlive component2 (click switch component1)',
     };
   }
 }

@@ -20,7 +20,6 @@ const browserRendererConfig = {
     return document.createComment(text);
   },
   patchProps(el, key, preValue, nextValue) {
-    console.log(111,  el,key,nextValue);
     if (/^on/.test(key)) {
       const invokers = el._vei || (el._vei = {});
       const name = key.slice(2).toLowerCase();
