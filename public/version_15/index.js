@@ -15,7 +15,6 @@ const App = {
               type: 'div',
               props: {
                 onClick: () => {
-                  console.log(1111)
                   window.refreshKeepAlive();
                 }
               },
