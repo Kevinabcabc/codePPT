@@ -1,4 +1,4 @@
-import defineAsyncComponent from './renderer/defineAsyncComponent.js';
+import defineAsyncComponent from './components/defineAsyncComponent.js';
 import renderer from './renderer/index.js';
 
 // 同步组件
